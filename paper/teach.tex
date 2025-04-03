@@ -1,0 +1,20 @@
+\section{Teachability}
+
+This proposal improves teachability of the C++ language as it makes regular for
+loops and range-based for loops more uniform improving regularity of the
+language.
+
+We can simply teach that a for loop has:
+\begin{itemize}
+  \item Optionally, a possibly comma-separated list of initializations in an \emph{init-statement}.
+  \item Optionally, one of the followings:
+    \begin{itemize}
+      \item A condition.
+      \item A \emph{for-range-declaration} separated with colon from a
+            \emph{for-range-initialize}
+    \end{itemize}
+  \item Optionally, an expression.
+\end{itemize}
+
+In addition to regularity, this proposal allows to avoid simple errors made by
+programmers when using range-based for loops.

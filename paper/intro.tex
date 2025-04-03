@@ -1,0 +1,42 @@
+\section{Introduction}
+
+Initializers in range-based for loops~\cite{p0614} were introduced in C++20 to
+solve issues with prvalues that might lead to undefined behavior.
+
+This has led to a new common pattern while iterating:
+
+\begin{lstlisting}
+std::array vec {2, 4, 6};
+for (int i=0; auto x : vec) {
+  std::println("v[{}] = {}", i, x);
+  ++i;
+}
+\end{lstlisting}
+\begin{lstlisting}[style=terminal]
+v[0] = 2
+v[1] = 4
+v[2] = 6
+\end{lstlisting}
+
+This allows safe traversal of an iterable, while having a handy way to access to
+the integer index.
+
+However, one might easily forget updating the index:
+
+\begin{lstlisting}
+std::array vec {2, 4, 6};
+for (int i=0; auto x : vec) {
+  std::println("v[{}] = {}", i, x);
+  // Ouch! Forgot to update i
+}
+\end{lstlisting}
+\begin{lstlisting}[style=terminal]
+v[0] = 2
+v[0] = 4
+v[0] = 6
+\end{lstlisting}
+
+An obvious extension is to allow the increment to be part of the for statement.
+P0614~\cite{p0614} already outlined as a future direction a range-based for with
+increment as \cppkey{for (init; auto x : e; inc)}. However, to the best of my
+knowledge this has never been proposed.

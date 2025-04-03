@@ -1,0 +1,77 @@
+\section{Proposed change}
+
+\subsection{Before/After}
+
+\begin{center}
+\begin{tabular}{|p{.4\textwidth}|p{.4\textwidth}|}
+\hline
+\textbf{Before} & \textbf{After}\\
+\hline
+\begin{lstlisting}
+for (int i = 0; auto x : e) {
+  f(x,i);
+  ++i;
+}
+\end{lstlisting}
+&
+\begin{lstlisting}
+for (int i = 0; auto x : e; ++i) {
+  f(x,i);
+}
+\end{lstlisting}
+\\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Discussion}
+
+\subsubsection{Current use}
+
+The use of initializers in for-statements is encouraged by some coding guidelines
+(e.g.
+\href{https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es6-declare-names-in-for-statement-initializers-and-conditions-to-limit-scope}{CppCoreGuidelines
+ES.6}). However, the fact that the initialized variable needs to be updated in
+loop body (and might be forgotten) might lead to logical errors.
+
+This current state has also a teachability impact as the programmer has to
+remember to add the update of the initialized variable at the end of the loop
+body.
+
+\subsubsection{Conflict with multi-range for loops}
+
+A conflicting proposal would be to allow multiple ranges in the same for-loop as
+outlined by P0026~\cite{p0026}. 
+
+\begin{lstlisting}
+for (int i = 0; auto x : e1; auto y : e2) {
+  f(x,y);
+}
+\end{lstlisting}
+
+However, such a proposal was presented in 2016
+and since then there has been no activity in such direction.
+
+\subsubsection{Library solutions}
+
+Although a library solution has not been explored, one might envision such a
+solution based on some kind of iterator:
+
+\begin{lstlisting}
+for (auto i : indexed{e}) {
+  std::println("v[{}] = {}", i.index(), i.value());
+}
+\end{lstlisting}
+
+Or even in combination with structured bindings:
+
+\begin{lstlisting}
+for (auto [i, x] : indexed{e}) {
+  std::println("v[{}] = {}", i, x);
+}
+\end{lstlisting}
+
+However, those solutions assume a specific type for the index. Besides they do
+not allow for cases where the updated variable(s) might get an update different
+from increment.
+
