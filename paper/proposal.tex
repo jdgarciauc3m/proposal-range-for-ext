@@ -38,6 +38,98 @@ This current state has also a teachability impact as the programmer has to
 remember to add the update of the initialized variable at the end of the loop
 body.
 
+\subsubsection{Expected meaning}
+
+It might be considered that the proposed meaning is surprising as a possible
+interpretation is that in a traditional for loop and a range-based for loop
+have similarities:
+
+\begin{lstlisting}
+for (int i=0; i<max; ++i) {
+  //...
+}
+
+for (auto x : v) {
+  //...
+}
+\end{lstlisting}
+
+Consequently the expression \cppid{x : v} may be seen as a termination
+condition, just like the expression \cppid{i < max}.
+
+However, consider the case of the proposed new syntax.
+\begin{lstlisting}
+for (int i=0; x : v; ++i) {
+  //...
+}
+\end{lstlisting} 
+
+In this case, the programmer might see that the apparent loop variable is
+\cppid{i} and that it is used in the loop condition.
+
+However, a different view is that we can read \cppkey{for auto x : v} as
+\emph{``for each value x in the range v''}. This is more consistent with the
+name \emph{range-based for loop}.
+
+The fact that we have an unrelated variable \cppid{i} was introduced in C++20. So,
+since then we have the syntax for \emph{range-based for loop with initializers}:
+
+\begin{lstlisting}
+for(int i=0; auto x: v) {
+  //...
+}
+\end{lstlisting}
+
+Thus, in fact, we have \textbf{two} loop variables introduced: \cppid{i} and
+\cppid{x}. The latter (\cppid{x}) is implicitly updated in the for statement,
+while the former (\cppid{i}), needs to be updated in the loop body and may be
+easily forgotten.
+ 
+\subsubsection{Considering the for-range declaration different from the
+condition}
+
+An alternate design might consider the \emph{for-declaration} different from the
+condition.
+
+I am \textbf{not proposing} all 
+the following possibilities:
+
+\begin{lstlisting}
+// Traditional for loop
+for (int i=0; i<max; ++i) {
+  //...
+}
+
+// Range-based for loop
+for (x : v) {
+  //...
+}
+
+// Range-based for loop with initializer
+for (int i=0; x : v) {
+  //...
+  ++i;
+}
+
+// Range-based for loop with initializer and condition
+for (int i=0; x : v; i<10) {
+  //...
+  ++i
+}
+
+// Range-based for loop with initializer, condition and expression
+for (int i=0; x : v; i<10; ++i) {
+  //...
+}
+
+// Range-based for loop with initializer, condition and without expression
+for (int i=0; x : v; ; ++i) {
+  //...
+}
+\end{lstlisting}
+
+This would be more complicated from what I currently propose in this paper.
+
 \subsubsection{Conflict with multi-range for loops}
 
 A conflicting proposal would be to allow multiple ranges in the same for-loop as
@@ -51,6 +143,9 @@ for (int i = 0; auto x : e1; auto y : e2) {
 
 However, such a proposal was presented in 2016
 and since then there has been no activity in such direction.
+
+Nevertheless, I am not preventing this approach if it is retaken as a
+\cppid{for-range declaration} is different from an expression.
 
 \subsubsection{Library solutions}
 
@@ -71,7 +166,67 @@ for (auto [i, x] : indexed{e}) {
 }
 \end{lstlisting}
 
-However, those solutions assume a specific type for the index. Besides they do
-not allow for cases where the updated variable(s) might get an update different
-from increment.
+However, those solutions assume a specific type for the index (\cppkey{int},
+\cppkey{std::size\_t}, \ldots). Besides they do not allow for cases where the
+updated variable(s) might get an update different from plain increment.
+
+\subsubsection{Using \cppid{views::enumerate}}
+
+One specific solution would be to use \cppid{std::views::enumerate}.
+
+\begin{lstlisting}
+std::array v{2.5, 3.0, 4.5, 5.0, 5.5};
+for (auto [i, x] : std::views::enumerate(v)) {
+  std::println("v[{}] = {}", i, x);
+}
+\end{lstlisting}
+
+However, this solution has two drawbacks:
+\begin{itemize}
+
+\item 
+It is not possible to specify the specific type of the integer index.
+
+\item 
+The initial value of the index is fixed to start at \cppid{0}.
+
+\end{itemize}
+
+\subsubsection{Current approach}
+
+Current approach for the example covered in this paper could be:
+\begin{lstlisting}
+std::array vec {1, 2, 3, 4, 5, 6};
+for (int i=0; auto x : vec) {
+  std::println("v[{}] = {}", i++, x);
+}
+\end{lstlisting}
+
+However, this presents a maintenance burden. Consider now, that we decide to
+modifiy the loop to print only even values:
+
+\begin{lstlisting}
+std::array vec {1, 2, 3, 4, 5, 6};
+for (int i=0; auto x : vec) {
+  if (is_even(x)) {
+    std::println("v[{}] = {}", i++, x);
+  }
+}
+\end{lstlisting}
+
+That would incorrectly print indices of even values as the index is only
+incremented if \cppid{is\_even(x)} is \cppkey{true}.
+
+However, consider both loops with the proposed solution:
+\begin{lstlisting}
+std::array vec {1, 2, 3, 4, 5, 6};
+for (int i=0; auto x : vec, ++i) {
+  std::println("v[{}] = {}", i, x);
+}
+for (int i=0; auto x : vec, ++i) {
+  if (is_even(x)) {
+    std::println("v[{}] = {}", i, x);
+  }
+}
+\end{lstlisting}
 
