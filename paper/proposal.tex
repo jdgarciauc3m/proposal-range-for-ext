@@ -95,34 +95,42 @@ I am \textbf{not proposing} all
 the following possibilities:
 
 \begin{lstlisting}
-// Traditional for loop
+// Traditional for loop. 
+// Works today.
 for (int i=0; i<max; ++i) {
   //...
 }
 
-// Range-based for loop
+// Range-based for loop. 
+// Works today.
 for (x : v) {
   //...
 }
 
-// Range-based for loop with initializer
+// Range-based for loop with initializer. 
+// Works today.
 for (int i=0; x : v) {
   //...
   ++i;
 }
+\end{lstlisting}
 
-// Range-based for loop with initializer and condition
+\begin{lstlisting}
+// Range-based for loop with initializer and condition.
+// Not Proposed.
 for (int i=0; x : v; i<10) {
   //...
   ++i
 }
 
 // Range-based for loop with initializer, condition and expression
+// Not proposed.
 for (int i=0; x : v; i<10; ++i) {
   //...
 }
 
 // Range-based for loop with initializer, condition and without expression
+// Not Proposed.
 for (int i=0; x : v; ; ++i) {
   //...
 }
@@ -185,12 +193,37 @@ However, this solution has two drawbacks:
 \begin{itemize}
 
 \item 
-It is not possible to specify the specific type of the integer index.
+It is not possible to specify the concrete type of the integer index.
 
 \item 
 The initial value of the index is fixed to start at \cppid{0}.
 
 \end{itemize}
+
+\subsubsection{Other uses}
+
+The proposed solution does not limit itself to integer indexing and may have
+other uses:
+
+Consider the following:
+
+\begin{lstlisting}
+enum class flag { none=0, open=1<<0, close=1<<1, read=1<<2, write=1<<3 };
+
+flag next(flag x); // Get next flag option
+
+std::array names { "<none>", "<open>", "<close>", "<read>", "<write>"};
+for (auto f = flag::none; auto n : names; f = next(f)) {
+  do_something(f); 
+  std::println("{}", n);
+}
+\end{lstlisting}
+
+In this case, the variable \cppid{f} in the \emph{for-loop initializer} is from
+an enum type. And in each iteration is updated by the expression \cppid{f =
+next(f)}.
+
+Such a loop does not seem easy to express with \cppid{std::views::enumerate}.
 
 \subsubsection{Current approach}
 
