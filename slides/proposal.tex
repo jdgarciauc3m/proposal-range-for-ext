@@ -1,0 +1,35 @@
+\section{Proposed change}
+
+\begin{frame}[t,fragile]{Before/After}
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{block}{Before}
+\begin{lstlisting}[escapechar=@]
+for (int i=0; auto x : e) {
+  f(x,i);
+  @\textbad{++i}@;
+}
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+\begin{block}{After}
+\begin{lstlisting}[escapechar=@]
+for (int i=0; auto x : e; @\textbad{++i}@) {
+  f(x,i);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item This extension was already outlined in P0614.
+\begin{lstlisting}
+for (init; auto x : vec; inc)
+\end{lstlisting}
+\end{itemize}
+
+\end{frame}

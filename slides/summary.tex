@@ -1,0 +1,24 @@
+\section{Summary}
+
+\begin{frame}[t,fragile]{Summary}
+\begin{itemize}
+  \item The introduction of initializer in range-based for loops in C++20 
+        needs to be complemented with the expression part.
+    \begin{itemize}
+      \item Avoid updates at the end of the loop.
+      \item Not using the initialized variable in the expression should not be
+            an issue.
+    \end{itemize}
+  
+  \vfill\pause
+  \item The use of \cppid{std::views::enumerate} is not a general solution for
+        every coding pattern.
+
+  \vfill\pause
+  \item Ranges are a great building block, but they do not need to solve every
+        problem.
+    \begin{itemize}
+      \item Do not try to enforce a single style of programming [D\&E].
+    \end{itemize}
+\end{itemize}
+\end{frame}

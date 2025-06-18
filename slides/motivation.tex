@@ -1,0 +1,52 @@
+\section{Motivation}
+
+\begin{frame}[t,fragile]{Range for loops with initializers}
+\begin{itemize}
+  \item Initializers in range-based for loops (P0614R1) introduced in C++20.
+
+  \mode<presentation>{\vfill\pause}
+  \item New \textmark{common pattern} for iteration and index update:
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{lstlisting}
+std::array vec{2, 4, 6}
+for (int i=0; auto x : vec) {
+  std::println("v[{}] = {}", i, x);
+  ++i; // Must remember
+}
+\end{lstlisting}
+
+\column{.4\textwidth}
+\begin{lstlisting}[style=terminal,escapechar=@]
+@v[0] = 2@
+@v[1] = 4@
+@v[2] = 6@
+\end{lstlisting}
+
+\end{columns}
+
+  \mode<presentation>{\vfill\pause}
+  \item Easy to \textbad{forget} the update expression.
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{lstlisting}
+std::array vec{2, 4, 6}
+for (int i=0; auto x : vec) {
+  std::println("v[{}] = {}", i, x);
+  // Ouch! Forgot to update i
+}
+\end{lstlisting}
+
+\column{.4\textwidth}
+\begin{lstlisting}[style=terminal,escapechar=@]
+@v[0] = 2@
+@v[0] = 4@
+@v[0] = 6@
+\end{lstlisting}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
