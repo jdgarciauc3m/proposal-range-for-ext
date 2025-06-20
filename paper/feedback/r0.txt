@@ -1,0 +1,14 @@
+J. Daniel Garcia presenting.
+GA: This is a minor thing - but being able to use continue in the middle of ranged for-loops is nice.
+Michael Spencer: meets the bar for me
+Alan Gray: without this feature this is amazing. This not being in the original specification is a defect.
+Pablo Halpern: I ran into this problem yesterday. I wanted to start my index count at 2 and enumerate didn’t work. I hacked around it but it’s annoying. I like this.
+GA: the disambiguator is a single colon.
+
+Poll: P3667R0: EWG encourages more work in the direction of extending range-for loop with an expression statement
+7/19/5/1/1
+
+Consensus
+
+Reasoning? The disambiguator being a single colon is … an issue. We also need a better enumerate.
+
